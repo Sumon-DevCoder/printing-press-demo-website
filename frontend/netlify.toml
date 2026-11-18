@@ -1,0 +1,29 @@
+# Netlify build settings. Set "Base directory" to `frontend` in the Netlify UI;
+# this file lives there and Netlify reads it automatically.
+[build]
+  command = "npm run build"
+  publish = "dist"
+
+[build.environment]
+  # Vite 8 needs Node 20.19+ / 22.12+. Pin it so Netlify's default can't break the build.
+  NODE_VERSION = "22"
+
+# SPA fallback: /services, /contact etc. must serve index.html (also in public/_redirects).
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Content-Type-Options = "nosniff"
+    X-Frame-Options = "DENY"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=()"
+
+# Hashed build assets never change, so browsers can cache them for a year.
+[[headers]]
+  for = "/assets/*"
+  [headers.values]
+    Cache-Control = "public, max-age=31536000, immutable"
